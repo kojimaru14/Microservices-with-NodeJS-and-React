@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: comments-depl # the name of the deployment (which you see in logs etc.)
+spec:
+    replicas: 1 # the number of pods we are trying to create
+    selector: # you are telling the deployment to look for a pod that has the key value pair of app=comments
+        matchLabels:
+            app: comments
+    template: # you are telling the deployment to create a pod with specific name (app=comments)
+        metadata:
+            labels:
+                app: comments
+        spec: # config of the pod you are trying to make
+            containers:
+                - name: comments
+                  image: lyugaloki/comments
+---
+# --- means create a new config for separate object
+apiVersion: v1
+kind: Service
+metadata:
+    name: comments-srv
+spec:
+    selector:
+        app: comments # Choose the key-value pair that matches the name (template) of the comments deployment/pod
+    type: ClusterIP
+    ports:
+        - name: comments
+          protocol: TCP
+          port: 4001
+          targetPort: 4001
