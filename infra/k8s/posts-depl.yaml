@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: posts-depl # the name of the deployment (which you see in logs etc.)
+spec:
+    replicas: 1 # the number of pods we are trying to create
+    selector: # you are telling the deployment to look for a pod that has the key value pair of app=posts
+        matchLabels:
+            app: posts
+    template: # you are telling the deployment to create a pod with specific name (app=posts)
+        metadata:
+            labels:
+                app: posts
+        spec: # config of the pod you are trying to make
+            containers:
+                - name: posts
+                  image: lyugaloki/posts
+---
+# --- means create a new config for separate object
+apiVersion: v1
+kind: Service
+metadata:
+    name: posts-clusterip-srv
+spec:
+    selector:
+        app: posts # Choose the key-value pair that matches the name (template) of the posts deployment/pod
+    type: ClusterIP
+    ports:
+        - name: posts
+          protocol: TCP
+          port: 4000
+          targetPort: 4000

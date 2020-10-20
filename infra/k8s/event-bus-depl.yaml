@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: event-bus-depl # the name of the deployment (which you see in logs etc.)
+spec:
+    replicas: 1 # the number of pods we are trying to create
+    selector: # you are telling the deployment to look for a pod that has the key value pair of app=event-bus
+        matchLabels:
+            app: event-bus
+    template: # you are telling the deployment to create a pod with specific name (app=event-bus)
+        metadata:
+            labels:
+                app: event-bus
+        spec: # config of the pod you are trying to make
+            containers:
+                - name: event-bus
+                  image: lyugaloki/event-bus
+---
+# --- means create a new config for separate object
+apiVersion: v1
+kind: Service
+metadata:
+    name: event-bus-srv
+spec:
+    selector:
+        app: event-bus # Choose the key-value pair that matches the name (template) of the event-bus deployment/pod
+    type: ClusterIP
+    ports:
+        - name: event-bus
+          protocol: TCP
+          port: 4005
+          targetPort: 4005
