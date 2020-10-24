@@ -1,0 +1,58 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+    kubectl:   
+        manifests: # Telling skaffold that we have config (yaml files) in this directory. When files in this path are changed, skaffold will automatically detect it
+            - ./infra/k8s/*
+build:
+    local:
+        push: false
+    artifacts:
+        - image: lyugaloki/client
+          context: client
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+                - src: 'src/**/*.js'
+                  dest: .
+        - image: lyugaloki/comments
+          context: comments
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+                - src: '*.js'
+                  dest: .
+        - image: lyugaloki/event-bus
+          context: event-bus
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+                - src: '*.js'
+                  dest: .
+        - image: lyugaloki/moderation
+          context: moderation
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+                - src: '*.js'
+                  dest: .
+        - image: lyugaloki/posts
+          context: posts
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+                - src: '*.js'
+                  dest: .
+        - image: lyugaloki/query
+          context: query
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+                - src: '*.js'
+                  dest: .
