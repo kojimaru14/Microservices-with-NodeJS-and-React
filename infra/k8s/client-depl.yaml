@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: client-depl # the name of the deployment (which you see in logs etc.)
+spec:
+    replicas: 1 # the number of pods we are trying to create
+    selector: # you are telling the deployment to look for a pod that has the key value pair of app=client
+        matchLabels:
+            app: client
+    template: # you are telling the deployment to create a pod with specific name (app=client)
+        metadata:
+            labels:
+                app: client
+        spec: # config of the pod you are trying to make
+            containers:
+                - name: client
+                  image: lyugaloki/client
+---
+# --- means create a new config for separate object
+apiVersion: v1
+kind: Service
+metadata:
+    name: client-srv
+spec:
+    selector:
+        app: client # Choose the key-value pair that matches the name (template) of the client deployment/pod
+    type: ClusterIP
+    ports:
+        - name: client
+          protocol: TCP
+          port: 3000
+          targetPort: 3000
